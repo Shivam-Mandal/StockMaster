@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import connectDB from './src/config/db.js';
 import healthCheckRoute from './src/routes/healthCheckRoute.js';
-import authRoutes from './src/routes/authRoutes.js';
+import authRoutes from './src/routes/authRoute.js';
 
 dotenv.config();
 
