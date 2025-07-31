@@ -1,11 +1,14 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const connectDB = require('../middleware/connectDB');
+const connectDB = require('../config/db');
 
 //Import all Routes
-const healthCheckRoute = require("./Routes/healthCheckRoute");
+const healthCheckRoute = require("../routes/healthCheckRoute");
+
+// MongoDB Connection
+connectDB();
+
 
 dotenv.config();
 const app = express();
@@ -26,8 +29,7 @@ app.use('/health', healthCheckRoute);
 
 
 const PORT = process.env.PORT || 3001
-// MongoDB Connection
-connectDB();
+
 
 app.listen(PORT, () => {
     console.log(`🚀 Server running at http://localhost:${PORT}`);
