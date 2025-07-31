@@ -1,14 +1,10 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const connectDB = require('../config/db');
+const connectDB = require('./src/config/db');
 
 //Import all Routes
-const healthCheckRoute = require("../routes/healthCheckRoute");
-
-// MongoDB Connection
-connectDB();
-
+const healthCheckRoute = require("./src/routes/healthCheckRoute");
 
 dotenv.config();
 const app = express();
@@ -30,6 +26,9 @@ app.use('/health', healthCheckRoute);
 
 const PORT = process.env.PORT || 3001
 
+
+// MongoDB Connection
+connectDB();
 
 app.listen(PORT, () => {
     console.log(`🚀 Server running at http://localhost:${PORT}`);
