@@ -1,0 +1,271 @@
+import React, { useState } from "react";
+
+export default function Login({ onSubmit }) {
+  const [form, setForm] = useState({ email: "", password: "", remember: true });
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+
+  function handleChange(e) {
+    const { name, value, type, checked } = e.target;
+    setForm((f) => ({ ...f, [name]: type === "checkbox" ? checked : value }));
+  }
+
+  function validate() {
+    const e = {};
+    if (!form.email) e.email = "Email is required.";
+    if (!form.password) e.password = "Password is required.";
+    return e;
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    const eobj = validate();
+    setErrors(eobj);
+    if (Object.keys(eobj).length) return;
+
+    try {
+      setLoading(true);
+      if (onSubmit) {
+        await onSubmit(form);
+      } else {
+        await new Promise((r) => setTimeout(r, 800));
+        console.log("Submitted:", form);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900 flex items-center justify-center p-6">
+      <div className="w-full max-w-md">
+        {/* Brand */}
+        <div className="flex items-center justify-center gap-3 mb-8">
+          <div className="h-11 w-11 rounded-2xl bg-slate-900 dark:bg-white flex items-center justify-center shadow-md">
+            <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none">
+              <rect
+                x="4"
+                y="7"
+                width="3"
+                height="10"
+                rx="1.5"
+                className="fill-white dark:fill-slate-900"
+              />
+              <rect
+                x="10.5"
+                y="5"
+                width="3"
+                height="14"
+                rx="1.5"
+                className="fill-white dark:fill-slate-900"
+              />
+              <rect
+                x="17"
+                y="9"
+                width="3"
+                height="8"
+                rx="1.5"
+                className="fill-white dark:fill-slate-900"
+              />
+            </svg>
+          </div>
+          <div className="text-center">
+            <h1 className="text-2xl font-semibold text-slate-900 dark:text-white tracking-tight">
+              Stock Master
+            </h1>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              Sign in to manage your portfolio
+            </p>
+          </div>
+        </div>
+
+        {/* Card */}
+        <div className="rounded-2xl bg-white/80 dark:bg-slate-900/70 backdrop-blur border border-slate-200/60 dark:border-slate-800 shadow-xl">
+          <div className="p-6 sm:p-8">
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {/* Email */}
+              <div>
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+                >
+                  Email
+                </label>
+                <div className="mt-1.5">
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    placeholder="you@company.com"
+                    value={form.email}
+                    onChange={handleChange}
+                    className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2.5 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900/20 dark:focus:ring-white/20"
+                  />
+                </div>
+                {errors.email && (
+                  <p className="mt-1.5 text-xs text-rose-600">{errors.email}</p>
+                )}
+              </div>
+
+              {/* Password */}
+              <div>
+                <div className="flex items-center justify-between">
+                  <label
+                    htmlFor="password"
+                    className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+                  >
+                    Password
+                  </label>
+                  <a
+                    href="#"
+                    className="text-xs font-medium text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+                  >
+                    Forgot password?
+                  </a>
+                </div>
+                <div className="mt-1.5 relative">
+                  <input
+                    id="password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    autoComplete="current-password"
+                    placeholder="enter your password"
+                    value={form.password}
+                    onChange={handleChange}
+                    className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2.5 pr-10 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900/20 dark:focus:ring-white/20"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((s) => !s)}
+                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                    aria-label={
+                      showPassword ? "Hide password" : "Show password"
+                    }
+                  >
+                    {showPassword ? (
+                      // Eye-off icon
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeWidth="1.8"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M3 3l18 18M10.6 10.6A3 3 0 0012 15a3 3 0 001.4-5.4M9.9 5.1A10.7 10.7 0 0112 5c5.2 0 9.6 3.6 10.8 8a11.6 11.6 0 01-2.6 4.7M6.2 6.2A11.7 11.7 0 001.2 13c1.1 4.4 5.5 8 10.8 8 1.5 0 2.9-.3 4.2-.9"
+                        />
+                      </svg>
+                    ) : (
+                      // Eye icon
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeWidth="1.8"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"
+                        />
+                        <circle cx="12" cy="12" r="3" strokeWidth="1.8" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+                {errors.password && (
+                  <p className="mt-1.5 text-xs text-rose-600">
+                    {errors.password}
+                  </p>
+                )}
+              </div>
+
+              {/* Remember me */}
+              <div className="flex items-center justify-between">
+                <label className="inline-flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    name="remember"
+                    checked={form.remember}
+                    onChange={handleChange}
+                    className="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900 dark:focus:ring-white"
+                  />
+                  <span className="text-sm text-slate-600 dark:text-slate-300">
+                    Remember me
+                  </span>
+                </label>
+              </div>
+
+              {/* Submit */}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full inline-flex items-center justify-center rounded-xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 px-4 py-2.5 font-medium shadow-lg shadow-slate-900/10 dark:shadow-white/10 hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-900 disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {loading ? (
+                  <>
+                    <svg
+                      className="animate-spin -ml-1 mr-2 h-5 w-5 text-current"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                      ></path>
+                    </svg>
+                    Signing in…
+                  </>
+                ) : (
+                  "Sign in"
+                )}
+              </button>
+            </form>
+          </div>
+
+          {/* Footer */}
+          <div className="px-6 sm:px-8 py-4 bg-gradient-to-r from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 rounded-b-2xl border-t border-slate-200/60 dark:border-slate-800 text-center">
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              By signing in, you agree to the{" "}
+              <a
+                href="#"
+                className="underline hover:text-slate-700 dark:hover:text-slate-200"
+              >
+                Terms
+              </a>{" "}
+              and{" "}
+              <a
+                href="#"
+                className="underline hover:text-slate-700 dark:hover:text-slate-200"
+              >
+                Privacy Policy
+              </a>
+              .
+            </p>
+          </div>
+        </div>
+
+        <p className="mt-6 text-center text-xs text-slate-500 dark:text-slate-400">
+          © {new Date().getFullYear()} Stock Master
+        </p>
+      </div>
+    </div>
+  );
+}
