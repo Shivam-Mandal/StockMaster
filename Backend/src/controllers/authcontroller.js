@@ -7,7 +7,7 @@ dotenv.config()
 const JWT_SECRET = process.env.JWT_SECRET;
 
 //signup controller
-export const signup = async (req, res) => {
+const signup = async (req, res) => {
     const { name, email, password } = req.body;
     try {
         const existingAdmin = await Admin.findOne({ email });
@@ -27,7 +27,7 @@ export const signup = async (req, res) => {
 }
 
 // login controller
-export const login = async (req, res) => {
+const login = async (req, res) => {
     const { email, password } = req.body;
     try {
         const admin = await Admin.findOne({ email });
@@ -53,7 +53,7 @@ export const login = async (req, res) => {
     }
 }
 
-export const logout = (req, res) => {
+const logout = (req, res) => {
     try {
         res.clearCookie('token', {
             httpOnly: true,
@@ -66,3 +66,6 @@ export const logout = (req, res) => {
     }
 
 };
+
+
+export default {signup, login, logout}
