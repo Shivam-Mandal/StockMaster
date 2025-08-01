@@ -21,7 +21,7 @@ const orderSchema = new mongoose.Schema({
     enum: ['Cash', 'Card', 'UPI', 'Online'],
     default: 'Cash'
   },
-  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'Staff' },
+  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin' },
   createdAt: { type: Date, default: Date.now }
 });
 

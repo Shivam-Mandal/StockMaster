@@ -1,7 +1,7 @@
 //controllers/healthcheckController.js
-const mongoose = require("mongoose");
+import mongoose from 'mongoose'
 
-exports.healthcheck = async (req, res) => {
+const healthcheck = async (req, res) => {
     const health = {
         uptime: process.uptime(),
         message: 'OK',
@@ -24,3 +24,4 @@ exports.healthcheck = async (req, res) => {
     }
 };
 
+export default {healthcheck};

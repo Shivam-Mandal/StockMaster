@@ -16,7 +16,7 @@ const purchaseOrderSchema = new mongoose.Schema({
     enum: ['Pending', 'Received'],
     default: 'Pending'
   },
-  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'Staff' },
+  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin' },
   createdAt: { type: Date, default: Date.now }
 });
 
