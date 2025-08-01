@@ -50,7 +50,7 @@ const login = async (req, res) => {
         const adminObj = admin.toObject();
         delete adminObj.password;
 
-        res.json({ admin:adminObj, message: 'Logged in successfully' });
+        res.json({ message: 'Logged in successfully' });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
