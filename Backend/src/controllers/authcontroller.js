@@ -28,7 +28,7 @@ const signup = async (req, res) => {
 
 // login controller
 const login = async (req, res) => {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
     try {
         const admin = await Admin.findOne({ email });
         if (!admin)
@@ -38,20 +38,24 @@ const login = async (req, res) => {
         if (!isMatch)
             return res.status(400).json({ message: 'Invalid email or password' });
 
-        const token = jwt.sign({ id: admin._id }, JWT_SECRET, { expiresIn: '1d' });
+        const token = jwt.sign({ id: admin._id, role: admin.role }, JWT_SECRET, { expiresIn: '1d' });
 
         res.cookie('token', token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production', 
-            maxAge: 24 * 60 * 60 * 1000, 
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 24 * 60 * 60 * 1000,
             sameSite: 'strict',
         });
 
-        res.json({ message: 'Logged in successfully' });
+        const adminObj = admin.toObject();
+        delete adminObj.password;
+
+        res.json({ admin:adminObj, message: 'Logged in successfully' });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
-}
+};
+
 
 const logout = (req, res) => {
     try {
