@@ -1,10 +1,14 @@
 import React, { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
-export default function Login({ onSubmit }) {
+export default function Login() {
+  console.log("Rendering login page");
   const [form, setForm] = useState({ email: "", password: "", remember: true });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+
+  const { login } = useAuth();
 
   function handleChange(e) {
     const { name, value, type, checked } = e.target;
@@ -20,18 +24,17 @@ export default function Login({ onSubmit }) {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    const eobj = validate();
-    setErrors(eobj);
-    if (Object.keys(eobj).length) return;
+    const errs = validate();
+    setErrors(errs);
+    if (Object.keys(errs).length) return;
 
     try {
       setLoading(true);
-      if (onSubmit) {
-        await onSubmit(form);
-      } else {
-        await new Promise((r) => setTimeout(r, 800));
-        console.log("Submitted:", form);
-      }
+      const { email, password } = form;
+      await login({ email, password });
+      // await login(form);
+    } catch (error) {
+      alert("Login failed: " + error.message);
     } finally {
       setLoading(false);
     }
