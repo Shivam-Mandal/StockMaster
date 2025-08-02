@@ -12,6 +12,7 @@ const getAdminProfile = async (req, res) => {
     }
 }
 
+
 const addOperator = async (req, res) => {
     try {
         const admin = await Admin.findById(req.admin.id).select('-password'); 
@@ -53,3 +54,4 @@ export default {
     getAdminProfile, 
     addOperator
 };
+
