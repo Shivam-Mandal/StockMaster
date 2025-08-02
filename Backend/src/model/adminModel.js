@@ -28,7 +28,7 @@ const adminSchema = new mongoose.Schema({
     default: 'admin',
   },
   store: {
-    tyep: mongoose.Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'Store'
   },
   createdBy: {
