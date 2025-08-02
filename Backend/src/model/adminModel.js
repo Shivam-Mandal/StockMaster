@@ -6,6 +6,11 @@ const adminSchema = new mongoose.Schema({
     required: true,
   },
 
+  isFirstLogin: {
+    type: Boolean,
+    default: true, // Indicates if it's the first login for the user
+  },
+  
   email: {
     type: String,
     required: true,

@@ -38,6 +38,10 @@ const login = async (req, res) => {
         if (!isMatch)
             return res.status(400).json({ message: 'Invalid email or password' });
 
+        if(admin.isFirstLogin === true  && admin.role === 'operator') {
+            return res.status(400).json({ message: 'Please change your password first' });
+        }
+
         const token = jwt.sign({ id: admin._id, role: admin.role }, JWT_SECRET, { expiresIn: '1d' });
 
         res.cookie('token', token, {
@@ -71,5 +75,24 @@ const logout = (req, res) => {
 
 };
 
+const changePassword = async (req, res) => {
+    const { oldPassword, newPassword } = req.body;
+    try {
+        const admin = await Admin.findById(req.admin.id);
+        if (!admin) return res.status(404).json({ message: 'Admin not found' });
 
-export default {signup, login, logout}
+        const isMatch = await bcrypt.compare(oldPassword, admin.password);
+        if (!isMatch) return res.status(400).json({ message: 'Old password is incorrect' });
+
+        admin.password = await bcrypt.hash(newPassword, 10);
+        admin.isFirstLogin = false; // Set to false after first login
+        await admin.save();
+
+        res.status(200).json({ message: 'Password changed successfully' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+
+export default {signup, login, logout, changePassword}
