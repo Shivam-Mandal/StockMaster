@@ -1,15 +1,32 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
+import { Routes, Route, Navigate } from "react-router-dom";
+import SuperAdminDashboard from "./pages/SuperAdminDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
+import OperatorDashboard from "./pages/OperatorDashboard";
+import { useAuth } from "./context/AuthContext";
 import Login from "./pages/login";
 
 function App() {
-  const [count, setCount] = useState(0);
+  const { user, loading } = useAuth();
+
+  if (loading) return <div className="p-8 text-center">Loading...</div>; // ✅ Wait until token check finishes
 
   return (
-    <>
-      <Login />
-    </>
+    <Routes>
+      {/* <Route path="/login" element={<Login />} />
+      <Route
+        path="/super-admin"
+        element={user ? <SuperAdminDashboard /> : <Navigate to="/login" />}
+      />
+      <Route
+        path="/admin"
+        element={user ? <AdminDashboard /> : <Navigate to="/login" />}
+      />
+      <Route
+        path="/operator"
+        element={user ? <OperatorDashboard /> : <Navigate to="/login" />}
+      />
+      <Route path="*" element={<Navigate to="/login" />} /> */}
+    </Routes>
   );
 }
 
