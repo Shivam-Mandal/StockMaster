@@ -11,4 +11,4 @@ const getAdminProfile = async (req, res) => {
     }
 }
 
-export default getAdminProfile
+export default getAdminProfile;

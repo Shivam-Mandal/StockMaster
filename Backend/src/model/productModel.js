@@ -11,8 +11,14 @@ const productSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Supplier'
     },
+    store: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Store',
+        required: true
+    },
     createdAt: { type: Date, default: Date.now }
 });
+
 
 const Product = mongoose.model('Product', productSchema);
 export default Product;
