@@ -27,7 +27,7 @@ app.use(express.json());
 app.get('/', healthCheckRoute);
 app.use('/health', healthCheckRoute);
 app.use('/api/auth', authRoute);
-app.use('/api/auth',adminRoute)
+app.use('/api/admin',adminRoute)
 
 // Port
 const PORT = process.env.PORT || 3001;
