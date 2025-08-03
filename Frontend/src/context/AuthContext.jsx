@@ -12,7 +12,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/auth/session", {
+        const res = await fetch("http://localhost:5000/api/admin/session", {
           method: "GET",
           credentials: "include", // Send cookies!
         });
@@ -50,7 +50,7 @@ export function AuthProvider({ children }) {
     if (!res.ok) throw new Error("Login failed");
 
     // Session cookie is now set; fetch user info
-    const sessionRes = await fetch("http://localhost:5000/api/auth/session", {
+    const sessionRes = await fetch("http://localhost:5000/api/admin/session", {
       credentials: "include",
     });
 
