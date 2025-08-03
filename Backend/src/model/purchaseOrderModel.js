@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 const purchaseOrderSchema = new mongoose.Schema({
   supplier: { type: mongoose.Schema.Types.ObjectId, ref: 'Supplier', required: true },
+  store: { type: mongoose.Schema.Types.ObjectId, ref: 'Store', required: true },
   products: [
     {
       product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },

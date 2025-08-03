@@ -6,6 +6,11 @@ const adminSchema = new mongoose.Schema({
     required: true,
   },
 
+  isFirstLogin: {
+    type: Boolean,
+    default: true, // Indicates if it's the first login for the user
+  },
+
   email: {
     type: String,
     required: true,
@@ -20,14 +25,18 @@ const adminSchema = new mongoose.Schema({
   role: {
     type: String,
     enum: ['super-admin', 'admin', 'operator'],
-    default: 'operator',
+    default: 'admin',
   },
-
+  store: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Store'
+  },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Admin', // Only admins/super-admins can create other admins
     default: null,
   },
+
 
   createdAt: {
     type: Date,
