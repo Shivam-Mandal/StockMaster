@@ -70,7 +70,7 @@ export default function FeaturesMatrix() {
   };
 
   return (
-    <div className="p-6 font-sans max-w-6xl mx-auto">
+    <div className="p-2 font-sans max-w-6xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-800">Features</h2>
         <button

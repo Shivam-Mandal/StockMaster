@@ -16,7 +16,7 @@ import {
 } from "recharts";
 import ReactApexChart from "react-apexcharts";
 
-export default function SuperAdminDashboard() {
+export default function OperatorDashboard() {
   const stockConsumptionData = [
     { name: "Jan", stock: 400 },
     { name: "Feb", stock: 300 },
