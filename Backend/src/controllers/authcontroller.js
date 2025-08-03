@@ -42,7 +42,7 @@ const login = async (req, res) => {
             return res.status(400).json({ message: 'Please change your password first' });
         }
 
-        const token = jwt.sign({ id: admin._id, role: admin.role }, JWT_SECRET, { expiresIn: '1d' });
+        const token = jwt.sign({ id: admin._id, role: admin.role,storeId: admin.storeId }, JWT_SECRET, { expiresIn: '1d' });
 
         res.cookie('token', token, {
             httpOnly: true,

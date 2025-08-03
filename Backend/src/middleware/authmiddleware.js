@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken'
-const authenticateAdmin = (req, res, next) => {
+const authmiddleware = (req, res, next) => {
     const token = req.cookies.token;
     if (!token) return res.status(401).json({ message: 'Unauthorized' });
 
@@ -12,4 +12,4 @@ const authenticateAdmin = (req, res, next) => {
     }
 };
 
-export default authenticateAdmin;
+export default authmiddleware;
