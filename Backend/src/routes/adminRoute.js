@@ -6,13 +6,16 @@ import authorize from '../middleware/authorize.js';
 
 const router = express.Router();
 
-router.get('/session', authmiddleware, adminController.getAdminProfile);
+router.get('/session', authmiddleware,authorize('super-admin','admin','operator'), adminController.getAdminProfile);
 
-router.post('/add-operator', authmiddleware, adminController.addOperator);
+
+router.post('/add-operator', authmiddleware,authorize('admin'), adminController.addOperator)
+
 
 router.get('/inactive-stores', authmiddleware, authorize('super-admin'), adminController.getInactiveStores);
 
 router.post
+
 export default router;
 
 

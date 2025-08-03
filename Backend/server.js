@@ -3,11 +3,18 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import connectDB from './src/config/db.js';
+import cookieParser from 'cookie-parser';
 import healthCheckRoute from './src/routes/healthCheckRoute.js';
 import authRoute from './src/routes/authroute.js';
 import adminRoute from './src/routes/adminRoute.js'
+
+import purchaseOrderRoute from './src/routes/purchaseOrderRoute.js'
+import supplierRoute from './src/routes/supplierRoute.js'
+import inventryRoute from './src/routes/inventryRoute.js'
+
 import cookieParser from 'cookie-parser';
 import notificationController from './src/controllers/notificationController.js';
+
 
 
 
@@ -28,7 +35,10 @@ app.use(express.json());
 app.get('/', healthCheckRoute);
 app.use('/health', healthCheckRoute);
 app.use('/api/auth', authRoute);
-app.use('/api/admin',adminRoute)
+app.use('/api/admin',adminRoute);
+app.use('/api/product-purchase',purchaseOrderRoute)
+app.use('/api/supplier',supplierRoute)
+app.use('/api/product',inventryRoute)
 
 // Port
 const PORT = process.env.PORT || 3001;
