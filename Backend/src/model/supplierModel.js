@@ -12,7 +12,7 @@ const supplierSchema = new mongoose.Schema({
     postalCode: String,
     country: { type: String, default: 'India' }
   },
-  gstNumber: String,
+ 
   createdAt: { type: Date, default: Date.now }
 });
 
