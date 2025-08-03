@@ -40,12 +40,14 @@ export default function Login() {
     }
   }
 
+  // Unchanged JS logic above...
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-[#EDF6F7] flex items-center justify-center p-6">
       <div className="w-full max-w-md">
         {/* Brand */}
         <div className="flex items-center justify-center gap-3 mb-8">
-          <div className="h-11 w-11 rounded-2xl bg-slate-900 dark:bg-white flex items-center justify-center shadow-md">
+          <div className="h-11 w-11 rounded-2xl bg-white flex items-center justify-center shadow-md">
             <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none">
               <rect
                 x="4"
@@ -53,7 +55,7 @@ export default function Login() {
                 width="3"
                 height="10"
                 rx="1.5"
-                className="fill-white dark:fill-slate-900"
+                className="fill-slate-900"
               />
               <rect
                 x="10.5"
@@ -61,7 +63,7 @@ export default function Login() {
                 width="3"
                 height="14"
                 rx="1.5"
-                className="fill-white dark:fill-slate-900"
+                className="fill-slate-900"
               />
               <rect
                 x="17"
@@ -69,44 +71,42 @@ export default function Login() {
                 width="3"
                 height="8"
                 rx="1.5"
-                className="fill-white dark:fill-slate-900"
+                className="fill-slate-900"
               />
             </svg>
           </div>
           <div className="text-center">
-            <h1 className="text-2xl font-semibold text-slate-900 dark:text-white tracking-tight">
+            <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">
               Stock Master
             </h1>
-            <p className="text-sm text-slate-500 dark:text-slate-400">
+            <p className="text-sm text-slate-600">
               Sign in to manage your portfolio
             </p>
           </div>
         </div>
 
         {/* Card */}
-        <div className="rounded-2xl bg-white/80 dark:bg-slate-900/70 backdrop-blur border border-slate-200/60 dark:border-slate-800 shadow-xl">
+        <div className="rounded-2xl bg-white/90 backdrop-blur border border-slate-200 shadow-xl">
           <div className="p-6 sm:p-8">
             <form onSubmit={handleSubmit} className="space-y-5">
               {/* Email */}
               <div>
                 <label
                   htmlFor="email"
-                  className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+                  className="block text-sm font-medium text-slate-700"
                 >
                   Email
                 </label>
-                <div className="mt-1.5">
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    placeholder="you@company.com"
-                    value={form.email}
-                    onChange={handleChange}
-                    className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2.5 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900/20 dark:focus:ring-white/20"
-                  />
-                </div>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder="you@company.com"
+                  value={form.email}
+                  onChange={handleChange}
+                  className="mt-1.5 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-800/20"
+                />
                 {errors.email && (
                   <p className="mt-1.5 text-xs text-rose-600">{errors.email}</p>
                 )}
@@ -117,13 +117,13 @@ export default function Login() {
                 <div className="flex items-center justify-between">
                   <label
                     htmlFor="password"
-                    className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+                    className="block text-sm font-medium text-slate-700"
                   >
                     Password
                   </label>
                   <a
                     href="#"
-                    className="text-xs font-medium text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+                    className="text-xs text-slate-600 hover:text-slate-800"
                   >
                     Forgot password?
                   </a>
@@ -137,12 +137,12 @@ export default function Login() {
                     placeholder="enter your password"
                     value={form.password}
                     onChange={handleChange}
-                    className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2.5 pr-10 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900/20 dark:focus:ring-white/20"
+                    className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 pr-10 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-800/20"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword((s) => !s)}
-                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600"
                     aria-label={
                       showPassword ? "Hide password" : "Show password"
                     }
@@ -152,8 +152,8 @@ export default function Login() {
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         className="h-5 w-5"
-                        viewBox="0 0 24 24"
                         fill="none"
+                        viewBox="0 0 24 24"
                         stroke="currentColor"
                       >
                         <path
@@ -168,8 +168,8 @@ export default function Login() {
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         className="h-5 w-5"
-                        viewBox="0 0 24 24"
                         fill="none"
+                        viewBox="0 0 24 24"
                         stroke="currentColor"
                       >
                         <path
@@ -198,11 +198,9 @@ export default function Login() {
                     name="remember"
                     checked={form.remember}
                     onChange={handleChange}
-                    className="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900 dark:focus:ring-white"
+                    className="h-4 w-4 rounded border-[#1AB2E6] text-[#1AB2E6] focus:ring-[#1AB2E6]"
                   />
-                  <span className="text-sm text-slate-600 dark:text-slate-300">
-                    Remember me
-                  </span>
+                  <span className="text-sm text-slate-600">Remember me</span>
                 </label>
               </div>
 
@@ -210,7 +208,7 @@ export default function Login() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full inline-flex items-center justify-center rounded-xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 px-4 py-2.5 font-medium shadow-lg shadow-slate-900/10 dark:shadow-white/10 hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-900 disabled:opacity-60 disabled:cursor-not-allowed"
+                className=" cursor-pointer w-full inline-flex items-center justify-center rounded-xl bg-[#1AB2E6] text-white px-4 py-2.5 font-medium shadow-md hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-900 disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <>
@@ -244,20 +242,14 @@ export default function Login() {
           </div>
 
           {/* Footer */}
-          <div className="px-6 sm:px-8 py-4 bg-gradient-to-r from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 rounded-b-2xl border-t border-slate-200/60 dark:border-slate-800 text-center">
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+          <div className="px-6 sm:px-8 py-4 bg-slate-50 rounded-b-2xl border-t border-slate-200 text-center">
+            <p className="text-xs text-slate-500">
               By signing in, you agree to the{" "}
-              <a
-                href="#"
-                className="underline hover:text-slate-700 dark:hover:text-slate-200"
-              >
+              <a href="#" className="underline hover:text-slate-700">
                 Terms
               </a>{" "}
               and{" "}
-              <a
-                href="#"
-                className="underline hover:text-slate-700 dark:hover:text-slate-200"
-              >
+              <a href="#" className="underline hover:text-slate-700">
                 Privacy Policy
               </a>
               .
@@ -265,7 +257,7 @@ export default function Login() {
           </div>
         </div>
 
-        <p className="mt-6 text-center text-xs text-slate-500 dark:text-slate-400">
+        <p className="mt-6 text-center text-xs text-slate-500">
           © {new Date().getFullYear()} Stock Master
         </p>
       </div>

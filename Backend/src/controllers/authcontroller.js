@@ -1,10 +1,12 @@
 // controllers/adminController.js
+
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import Admin from '../model/adminModel.js';
 import Store from '../model/storeModel.js';
 import dotenv from 'dotenv';
 dotenv.config()
+
 const JWT_SECRET = process.env.JWT_SECRET;
 
 //signup controller
@@ -43,28 +45,26 @@ const signup = async (req, res) => {
 
         await store.save();
         admin.storeId = store._id;
+        await admin.save();
 
-        await admin.save()
-
-        res.status(200).json({ message: 'User registered successfully' });
-
-    } catch (error) {
-        console.log(error );
-        res.status(500).json({ error: error.message })
-    }
-}
+    res.status(200).json({ message: "User registered successfully" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
 // login controller
 const login = async (req, res) => {
-    let { email, password } = req.body;
-    try {
-        const admin = await Admin.findOne({ email });
-        if (!admin)
-            return res.status(400).json({ message: 'Invalid email or password' });
+  let { email, password } = req.body;
+  try {
+    const admin = await Admin.findOne({ email });
+    if (!admin)
+      return res.status(400).json({ message: "Invalid email or password" });
 
-        const isMatch = await bcrypt.compare(password, admin.password);
-        if (!isMatch)
-            return res.status(400).json({ message: 'Invalid email or password' });
+    const isMatch = await bcrypt.compare(password, admin.password);
+    if (!isMatch)
+      return res.status(400).json({ message: "Invalid email or password" });
+
 
         /*
         if(admin.isFirstLogin === true  && admin.role === 'operator') {
@@ -72,38 +72,37 @@ const login = async (req, res) => {
         }
         */
 
-        const token = jwt.sign({ id: admin._id, role: admin.role,storeId: admin.storeId }, JWT_SECRET, { expiresIn: '1d' });
+    const token = jwt.sign({ id: admin._id, role: admin.role,storeId: admin.storeId }, JWT_SECRET, { expiresIn: '1d' });
 
-        res.cookie('token', token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            maxAge: 24 * 60 * 60 * 1000,
-            sameSite: 'strict',
-        });
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
 
-        const adminObj = admin.toObject();
-        delete adminObj.password;
+    const adminObj = admin.toObject();
+    delete adminObj.password;
 
-        res.json({ message: 'Logged in successfully' });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+    res.json({ message: "Logged in successfully" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
-
 
 const logout = (req, res) => {
-    try {
-        res.clearCookie('token', {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
-        });
-        res.status(200).json({ message: 'Logged out successfully' });
-    } catch (error) {
-        res.status(500).json({ error: error.message })
-    }
-
+  try {
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    });
+    res.status(200).json({ message: "Logged out successfully" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
+
 
 const changePassword = async (req, res) => {
     const { oldPassword, newPassword } = req.body;
@@ -126,3 +125,4 @@ const changePassword = async (req, res) => {
 
 
 export default {signup, login, logout, changePassword}
+

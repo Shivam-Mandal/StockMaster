@@ -1,45 +1,42 @@
-// src/context/AuthContext.jsx
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import Cookies from "js-cookie";
-import { jwtDecode } from "jwt-decode";
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // ✅ loading flag
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    const token = Cookies.get("token");
-    if (token) {
+    const checkSession = async () => {
       try {
-        const decoded = jwtDecode(token);
-        const isExpired = decoded.exp * 1000 < Date.now();
+        const res = await fetch("http://localhost:5000/api/auth/session", {
+          method: "GET",
+          credentials: "include", // Send cookies!
+        });
 
-        if (isExpired) {
-          Cookies.remove("token");
-          setUser(null);
-          if (location.pathname !== "/login") navigate("/login");
-        } else {
-          setUser(decoded);
-          if (location.pathname === "/" || location.pathname === "/login") {
-            if (decoded.role === "super-admin") navigate("/super-admin");
-            else if (decoded.role === "admin") navigate("/admin");
-            else if (decoded.role === "operator") navigate("/operator");
-          }
+        if (!res.ok) throw new Error("Session check failed");
+
+        const data = await res.json();
+        setUser(data.admin);
+
+        // Redirect based on role
+        if (location.pathname === "/" || location.pathname === "/login") {
+          if (data.admin.role === "super-admin") navigate("/super-admin");
+          else if (data.admin.role === "admin") navigate("/admin");
+          else if (data.admin.role === "operator") navigate("/operator");
         }
       } catch (err) {
-        Cookies.remove("token");
         setUser(null);
-        navigate("/login");
+        if (location.pathname !== "/login") navigate("/login");
+      } finally {
+        setLoading(false);
       }
-    } else {
-      if (location.pathname !== "/login") navigate("/login");
-    }
-    setLoading(false); // ✅ Done checking token
+    };
+
+    checkSession();
   }, [location.pathname]);
 
   const login = async (formData) => {
@@ -52,25 +49,25 @@ export function AuthProvider({ children }) {
 
     if (!res.ok) throw new Error("Login failed");
 
-    const data = await res.json();
-    const token = data.token;
+    // Session cookie is now set; fetch user info
+    const sessionRes = await fetch("http://localhost:5000/api/auth/session", {
+      credentials: "include",
+    });
 
-    if (!token) throw new Error("No token received");
-    Cookies.set("token", token, { secure: true });
+    const data = await sessionRes.json();
+    console.log("User data:", data.admin);
+    setUser(data.admin);
 
-    const decoded = jwtDecode(token);
-    setUser(decoded);
-
-    console.log("User logged in:", decoded);
-
-    // ✅ Redirect based on role
-    if (decoded.role === "super-admin") navigate("/super-admin");
-    else if (decoded.role === "admin") navigate("/admin");
-    else if (decoded.role === "operator") navigate("/operator");
+    if (data.admin.role === "super-admin") navigate("/super-admin");
+    else if (data.admin.role === "admin") navigate("/admin");
+    else if (data.admin.role === "operator") navigate("/operator");
   };
 
-  const logout = () => {
-    Cookies.remove("token");
+  const logout = async () => {
+    await fetch("http://localhost:5000/api/auth/logout", {
+      method: "POST",
+      credentials: "include",
+    });
     setUser(null);
     navigate("/login");
   };
