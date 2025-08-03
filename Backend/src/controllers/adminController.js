@@ -1,5 +1,6 @@
 import Admin from '../model/adminModel.js';
 import bcrypt from 'bcryptjs';
+import Store from '../model/storeModel.js';
 
 const getAdminProfile = async (req, res) => {
     try {
@@ -50,8 +51,23 @@ const addOperator = async (req, res) => {
     }
 }
 
+const getInactiveStores = async (req, res) => {
+    try {       
+        const inactiveStores = await Store.find({ isActive: false }).populate('adminId', 'name email');
+        if (!inactiveStores || inactiveStores.length === 0) {
+            return res.status(404).json({ message: 'No inactive stores found' });
+        }
+
+        res.status(200).json({ inactiveStores });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Server error' });
+    }
+}
+
 export default {
     getAdminProfile, 
-    addOperator
+    addOperator,
+    getInactiveStores
 };
 

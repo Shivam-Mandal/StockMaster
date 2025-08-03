@@ -6,9 +6,12 @@ const storeSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Admin'
       },
-    contact:{type:Number,required:true},
+    contact:{type:String,required:true},
     address:{type:String,required:true},
-    isActive:true,
+    isActive: {
+        type: Boolean,
+        default: true
+    },
     lastActive:{
         type:Date,
         default:Date.now
@@ -16,4 +19,5 @@ const storeSchema = new mongoose.Schema({
 
 })
 
-export default Store = mongoose.model('Store',storeSchema);
+const Store = mongoose.model('Store',storeSchema);
+export default Store;
