@@ -11,8 +11,6 @@ import adminRoute from './src/routes/adminRoute.js'
 import purchaseOrderRoute from './src/routes/purchaseOrderRoute.js'
 import supplierRoute from './src/routes/supplierRoute.js'
 import inventryRoute from './src/routes/inventryRoute.js'
-
-import cookieParser from 'cookie-parser';
 import notificationController from './src/controllers/notificationController.js';
 
 
