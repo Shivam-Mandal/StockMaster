@@ -27,7 +27,7 @@ const adminSchema = new mongoose.Schema({
     enum: ['super-admin', 'admin', 'operator'],
     default: 'admin',
   },
-  store: {
+  storeId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Store'
   },
