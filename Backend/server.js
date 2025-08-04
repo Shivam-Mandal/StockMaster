@@ -36,7 +36,7 @@ app.use('/api/auth', authRoute);
 app.use('/api/admin',adminRoute);
 app.use('/api/product-purchase',purchaseOrderRoute)
 app.use('/api/supplier',supplierRoute)
-app.use('/api/product',inventryRoute)
+app.use('/api/inventry',inventryRoute)
 
 // Port
 const PORT = process.env.PORT || 3001;
