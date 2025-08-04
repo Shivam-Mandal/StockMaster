@@ -22,11 +22,11 @@ const cartItemSchema = new mongoose.Schema({
 }, { _id: false });
 
 const cartSchema = new mongoose.Schema({
-//   customer: {
-//     type: mongoose.Schema.Types.ObjectId,
-//     ref: "Customer",
-//     required: true
-//   },
+  admin: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Admin",
+    required: true
+  },
   store: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Store",
@@ -43,7 +43,7 @@ const cartSchema = new mongoose.Schema({
   },
   grandTotal: {
     type: Number,
-    required: true
+    default: 0
   },
   createdAt: {
     type: Date,
@@ -51,4 +51,4 @@ const cartSchema = new mongoose.Schema({
   }
 });
 
-export default mongoose.model("Cart", cartSchema);
+export default Cart = mongoose.model("Cart", cartSchema);
