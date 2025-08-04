@@ -1,6 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
-import Login from "./pages/login";
 import SuperAdminDashboard from "./pages/SuperAdminDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import OperatorDashboard from "./pages/OperatorDashboard";
@@ -9,20 +8,22 @@ import InventoryPage from "./pages/InventoryPage";
 import FeaturesPage from "./pages/FeaturesPage";
 import DashboardLayout from "./components/DashboardLayout";
 import MessagePage from "./pages/Message";
+import Login from "./pages/Login";
+import Loader from "./components/Loader";
 
 function App() {
   const { user, loading } = useAuth();
 
-  if (loading) return <div className="p-8 text-center">Loading...</div>;
+  if (loading) return <Loader />;
 
-  if (!user) {
+  if (!user)
     return (
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Navigate to="/login" />} />
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     );
-  }
 
   return (
     <Routes>
