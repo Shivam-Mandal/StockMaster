@@ -6,7 +6,7 @@ import authorize from '../middleware/authorize.js';
 
 const router = express.Router();
 
-router.post('/create-product-order', authmiddleware, authorize('admin'), purchaseOrderController.purchseFromSupplier)
+router.post('/create-product-order', authmiddleware, authorize('admin'), purchaseOrderController.purchaseFromSupplier)
 router.post('/receive-product-order', authmiddleware, authorize('admin'), purchaseOrderController.receivePurchaseOrder)
 
 export default router;
