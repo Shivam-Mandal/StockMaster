@@ -25,12 +25,11 @@ export async function userLogout() {
   return res.json();
 }
 
-export async function sessionUser(formData) {
+export async function sessionUser() {
   const res = await fetch(`${apiBaseUrl}/api/admin/session`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
-    credentials: "include", // to receive token in cookie
-    body: JSON.stringify(formData),
+    credentials: "include",
   });
 
   if (!res.ok) throw new Error("Login failed");
