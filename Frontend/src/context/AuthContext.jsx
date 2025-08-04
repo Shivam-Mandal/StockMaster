@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { loginUser, sessionUser, userLogout } from "../service/authService";
 
 const AuthContext = createContext();
 
@@ -12,16 +13,8 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/admin/session", {
-          method: "GET",
-          credentials: "include", // Send cookies!
-        });
-
-        if (!res.ok) throw new Error("Session check failed");
-
-        const data = await res.json();
+        const data = await sessionUser();
         setUser(data.admin);
-
         // Redirect based on role
         if (location.pathname === "/" || location.pathname === "/login") {
           if (data.admin.role === "super-admin") navigate("/super-admin");
@@ -40,36 +33,32 @@ export function AuthProvider({ children }) {
   }, [location.pathname]);
 
   const login = async (formData) => {
-    const res = await fetch("http://localhost:5000/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify(formData),
-    });
+    const res = await loginUser(formData);
 
-    if (!res.ok) throw new Error("Login failed");
+    if (!res) {
+      throw new Error("Login failed");
+    } else {
+      const data = await sessionUser();
+      if (!data) {
+        throw new Error("Failed to fetch user session");
+      } else {
+        if (!data.ok) throw new Error("Failed to fetch user session");
+        console.log("User data:", data.admin);
+        setUser(data.admin);
 
-    // Session cookie is now set; fetch user info
-    const sessionRes = await fetch("http://localhost:5000/api/admin/session", {
-      credentials: "include",
-    });
-
-    const data = await sessionRes.json();
-    console.log("User data:", data.admin);
-    setUser(data.admin);
-
-    if (data.admin.role === "super-admin") navigate("/super-admin");
-    else if (data.admin.role === "admin") navigate("/admin");
-    else if (data.admin.role === "operator") navigate("/operator");
+        if (data.admin.role === "super-admin") navigate("/super-admin");
+        else if (data.admin.role === "admin") navigate("/admin");
+        else if (data.admin.role === "operator") navigate("/operator");
+      }
+    }
   };
 
   const logout = async () => {
-    await fetch("http://localhost:5000/api/auth/logout", {
-      method: "POST",
-      credentials: "include",
-    });
-    setUser(null);
-    navigate("/login");
+    const res = await userLogout();
+    if (res) {
+      setUser(null);
+      navigate("/login");
+    }
   };
 
   return (

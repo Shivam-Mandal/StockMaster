@@ -8,6 +8,7 @@ import UsersPage from "./pages/UsersPage";
 import InventoryPage from "./pages/InventoryPage";
 import FeaturesPage from "./pages/FeaturesPage";
 import DashboardLayout from "./components/DashboardLayout";
+import MessagePage from "./pages/Message";
 
 function App() {
   const { user, loading } = useAuth();
@@ -32,6 +33,7 @@ function App() {
         <Route path="users" element={<UsersPage />} />
         <Route path="inventory" element={<InventoryPage />} />
         <Route path="features" element={<FeaturesPage />} />
+        <Route path="messages" element={<MessagePage />} />
         <Route path="*" element={<Navigate to={`/${user.role}`} />} />
       </Route>
     </Routes>
