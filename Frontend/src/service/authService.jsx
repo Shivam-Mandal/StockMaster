@@ -36,3 +36,16 @@ export async function sessionUser() {
 
   return res.json();
 }
+
+export async function registerUser(formData) {
+  const res = await fetch(`${apiBaseUrl}/api/auth/signup`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(formData),
+  });
+
+  if (!res.ok) throw new Error("Login failed");
+
+  return res.json();
+}

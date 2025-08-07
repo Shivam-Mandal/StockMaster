@@ -10,20 +10,24 @@ import DashboardLayout from "./components/DashboardLayout";
 import MessagePage from "./pages/Message";
 import Login from "./pages/Login";
 import Loader from "./components/Loader";
+import LandingPage from "./pages/LandingPage";
+import Register from "./pages/Register";
 
 function App() {
   const { user, loading } = useAuth();
 
   if (loading) return <Loader />;
 
-  if (!user)
+  if (!user) {
     return (
       <Routes>
+        <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/" element={<Navigate to="/login" />} />
-        <Route path="*" element={<Navigate to="/login" />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     );
+  }
 
   return (
     <Routes>
