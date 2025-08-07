@@ -239,6 +239,18 @@ export default function Login() {
                 )}
               </button>
             </form>
+            <div className="col-span-1 md:col-span-2 text-center text-sm mt-2">
+              Already have an account?
+              <a
+                href="/register"
+                className="text-blue-600 hover:underline ml-1"
+              >
+                Sign up
+              </a>
+            </div>
+            <a href="/" className="text-blue-600 hover:underline">
+              ← Back to Home
+            </a>
           </div>
 
           {/* Footer */}
