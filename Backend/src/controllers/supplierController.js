@@ -8,6 +8,12 @@ import {
 
 const addSupplier = async (req, res) => {
   try {
+    console.log("this is req.admin",req.admin)
+    const storeId = req.admin?.storeId;
+    console.log("storeId:",storeId)
+    if (!storeId) {
+  return res.status(400).json({ message: 'Store ID not found in authenticated request.' });
+}
     const {
       companyName,
       contactPerson,
@@ -42,6 +48,7 @@ const addSupplier = async (req, res) => {
     }
 
     const supplier = new Supplier({
+      store: [storeId],
       companyName: companyName.trim(),
       contactPerson: contactPerson?.trim(),
       contactNumber,
@@ -65,7 +72,8 @@ const addSupplier = async (req, res) => {
 
 const getAllSuppliers = async (req, res) => {
   try {
-    const suppliers = await Supplier.find().sort({ createdAt: -1 });
+    const storeId = req.admin.storeId;
+    const suppliers = await Supplier.find({ store: storeId }).sort({ createdAt: -1 });
     const totalSuppliers = suppliers.length;
 
     if (totalSuppliers === 0) {
