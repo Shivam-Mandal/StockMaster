@@ -1,5 +1,7 @@
 // src/pages/SuperAdminDashboard.jsx
-import React from "react";
+import React,{useState,useEffect} from "react";
+import axios from 'axios'
+import { apiBaseUrl } from "../service/api";
 import {
   LineChart,
   Line,
@@ -17,7 +19,7 @@ import {
   Legend,
 } from "recharts";
 import ReactApexChart from "react-apexcharts";
-import { Users, Package, TrendingUp, ShoppingCart } from "lucide-react";
+import { Users, Package, TrendingUp, ShoppingCart, Wallet } from "lucide-react";
 
 export default function SuperAdminDashboard() {
   const stockConsumptionData = [
@@ -65,28 +67,48 @@ export default function SuperAdminDashboard() {
     grid: { borderColor: "#e5e7eb" },
   };
 
+  const [kpisValue, setKpisValue] = useState({})
+
   const kpis = [
     {
       title: "Items in Stock",
-      value: 2200,
-      icon: <Package className="text-blue-600 h-6 w-6" />,
+      value: kpisValue.itemsInStock,
+      icon: <Package className="text-green-600 h-6 w-6" />,
+      
     },
     {
-      title: "Total Users",
-      value: 696,
-      icon: <Users className="text-green-600 h-6 w-6" />,
+      title: "Low Stock",
+      value: kpisValue.lowStockItems,
+      icon: <Package className="text-red-600 h-6 w-6" />,
     },
     {
-      title: "Inventory Turnover",
-      value: "$2.65M",
-      icon: <TrendingUp className="text-yellow-600 h-6 w-6" />,
+      title: "Inventory Value",
+      value: `${kpisValue.inventoryValue}`,
+      // icon: <TrendingUp className="text-yellow-600 h-6 w-6" />,
+      icon:<Wallet className="w-6 h-6 text-blue-500" />,
     },
     {
       title: "Orders this Week",
-      value: 62,
+      value: kpisValue.ordersThisWeek,
       icon: <ShoppingCart className="text-red-500 h-6 w-6" />,
     },
   ];
+
+useEffect(() => {
+  const fetchKpis = async () => {
+    try {
+      const kpires = await axios.get(`${apiBaseUrl}/api/dashboard/stats`, {
+        withCredentials: true});
+      console.log(kpires);
+      setKpisValue(kpires.data)
+    } catch (error) {
+      console.error("Error fetching KPI data:", error);
+    }
+  };
+
+  fetchKpis();
+}, []);
+
 
   return (
     <div className="p-6 min-h-screen font-sans bg-gray-100">

@@ -1,4 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { apiBaseUrl } from "../service/api";
+import axios from 'axios'
+import Tippy from '@tippyjs/react';
+import 'tippy.js/dist/tippy.css';
 import {
   FaPlus,
   FaInfoCircle,
@@ -30,18 +34,48 @@ const initialInventory = [
   },
 ];
 
+
+
+
+
 export default function InventoryPage() {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
   const pageSize = 5;
 
-  const filtered = initialInventory.filter(
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [productRes, categoryRes] = await Promise.all([
+          axios.get(`${apiBaseUrl}/api/inventory/product-list`, { withCredentials: true }),
+          axios.get(`${apiBaseUrl}/api/inventory/category-list`, { withCredentials: true })
+        ]);
+
+        setProducts(productRes.data.data);
+        setCategories(categoryRes.data);
+
+        console.log("Product List:", productRes.data.data);
+        console.log("Category List:", categoryRes.data);
+      } catch (error) {
+        console.error(
+          "Error fetching data:",
+          error.response?.data || error.message
+        );
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const filtered = products.filter(
     (item) =>
-      item.name.toLowerCase().includes(search.toLowerCase()) ||
+      item.name?.toLowerCase().includes(search.toLowerCase()) ||
       item.store.toLowerCase().includes(search.toLowerCase())
   );
 
-  const totalPages = Math.ceil(filtered.length / pageSize);
+  const totalPages = Math.ceil(filtered.length / pageSize) || 1;
   const pageData = filtered.slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize
@@ -70,53 +104,85 @@ export default function InventoryPage() {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto border border-gray-200 rounded-lg shadow-sm">
-        <table className="min-w-full text-sm text-gray-700">
+      <div className="overflow-x-scroll border border-gray-200 rounded-lg shadow-sm">
+        <table className="min-w-max text-sm text-gray-700">
           <thead className="border-b text-gray-700">
             <tr>
-              <th className="px-5 py-3 text-left font-semibold">Item Name</th>
-              <th className="px-5 py-3 text-left font-semibold">Store</th>
-              <th className="px-5 py-3 text-left font-semibold">
-                Manufacturer
-              </th>
-              <th className="px-5 py-3 text-left font-semibold">Model</th>
-              <th className="px-5 py-3 text-left font-semibold">Order By</th>
+              <th className="px-5 py-3 text-left font-semibold">SKU</th>
+              <th className="px-5 py-3 text-left font-semibold">Products</th>
+              <th className="px-5 py-3 text-left font-semibold">Cost Price</th>
+              <th className="px-5 py-3 text-left font-semibold">Selling Price</th>
+              <th className="px-5 py-3 text-left font-semibold">Brand</th>
+              <th className="px-5 py-3 text-left font-semibold">Category</th>
+              <th className="px-5 py-3 text-left font-semibold">Supplier</th>
               <th className="px-5 py-3 text-left font-semibold">Description</th>
-              <th className="px-5 py-3 text-left font-semibold">Min Stock</th>
+              <th className="px-5 py-3 text-left font-semibold">Stock Status</th>
+              <th className="px-5 py-3 text-left font-semibold">Quantity</th>
             </tr>
           </thead>
           <tbody>
-            {pageData.length === 0 ? (
+            {products.length === 0 ? (
               <tr>
                 <td colSpan={7} className="text-center py-10 text-gray-400">
                   No inventory found.
                 </td>
               </tr>
             ) : (
-              pageData.map((item, index) => (
+              products.map((item, index) => (
                 <tr
-                  key={item.id}
-                  className={`transition hover:bg-gray-50 ${
-                    index % 2 === 0 ? "bg-white" : "bg-gray-50"
-                  }`}
+                  key={item.id || index}
+                  className={`transition hover:bg-gray-200 ${index % 2 === 0 ? "bg-white" : "bg-gray-100"
+                    }`}
                 >
+                  <td className="px-5 py-4">{item.sku}</td>
                   <td className="px-5 py-4">{item.name}</td>
-                  <td className="px-5 py-4">{item.store}</td>
-                  <td className="px-5 py-4">{item.manufacturer}</td>
-                  <td className="px-5 py-4">{item.model}</td>
-                  <td className="px-5 py-4">{item.orderBy}</td>
-                  <td className="px-5 py-4">{item.description}</td>
+                  <td className="px-5 py-4">{item.costPrice} Rs.</td>
+                  <td className="px-5 py-4">{item.sellingPrice} Rs.</td>
+                  <td className="px-5 py-4">{item.brand}</td>
+                  <td className="px-5 py-4">{item.category}</td>
+                  <td className="px-5 py-4">{item.supplier.contactPerson}</td>
+                  {/* <td className="px-5 py-4 relative group">
+                    {item.description.length > 10
+                      ? `${item.description.substring(0, 30)}...`
+                      : item.description}
+                    <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block bg-gray-200 text-gray-900 rounded px-3 py-1 shadow-lg w-max max-w-xs z-20">
+                      {item.description}
+                    </div>
+                  </td> */}
+                  <td className="px-5 py-4 cursor-pointer">
+                    <Tippy content={item.description} placement="top" theme="light">
+                      <span>
+                        {item.description.length > 30
+                          ? `${item.description.substring(0, 30)}...`
+                          : item.description}
+                      </span>
+                    </Tippy>
+                  </td>
+
                   <td className="px-5 py-4">
                     <span
-                      className={`px-3 py-1 text-xs font-medium rounded-full ${
-                        item.minStock < 3
+                      className={`px-3 py-1 text-xs font-medium rounded-full
+    ${item.quantityInStock === 0
                           ? "bg-red-100 text-red-600"
-                          : "bg-green-100 text-green-600"
-                      }`}
+                          : item.quantityInStock < item.reorderLevel
+                            ? "bg-yellow-100 text-yellow-600"
+                            : "bg-green-100 text-green-600"
+                        }`}
                     >
-                      {item.minStock}
+                      {item.quantityInStock === 0
+                        ? "Out of Stock"
+                        : item.quantityInStock < item.reorderLevel
+                          ? "Low Stock"
+                          : "In Stock"}
                     </span>
                   </td>
+                  <td className={`px-5 py-4 font-medium
+    ${item.quantityInStock === 0
+                      ? " text-red-600"
+                      : item.quantityInStock < item.reorderLevel
+                        ? " text-yellow-600"
+                        : " text-green-600"
+                    }`}>{item.quantityInStock}</td>
                 </tr>
               ))
             )}

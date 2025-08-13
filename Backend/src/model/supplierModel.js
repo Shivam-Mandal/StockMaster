@@ -1,8 +1,13 @@
 import mongoose from 'mongoose';
 
 const supplierSchema = new mongoose.Schema({
+  store: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Store',
+    required: true
+  }],
   companyName: { type: String, required: true },
-  contactPerson: String,
+  contactPerson: {type: String, required:true},
   contactNumber: { type: String, required: true },
   email: String,
   address: {
@@ -12,7 +17,6 @@ const supplierSchema = new mongoose.Schema({
     postalCode: String,
     country: { type: String, default: 'India' }
   },
- 
   createdAt: { type: Date, default: Date.now }
 });
 
