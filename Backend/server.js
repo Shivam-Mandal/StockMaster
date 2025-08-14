@@ -10,9 +10,9 @@ import adminRoute from './src/routes/adminRoute.js'
 
 import purchaseOrderRoute from './src/routes/purchaseOrderRoute.js'
 import supplierRoute from './src/routes/supplierRoute.js'
-import inventryRoute from './src/routes/inventryRoute.js'
+import inventoryRoute from './src/routes/inventoryRoute.js'
 import notificationController from './src/controllers/notificationController.js';
-
+import dashboardRoute from './src/routes/dashboardRoute.js'
 
 
 
@@ -36,7 +36,8 @@ app.use('/api/auth', authRoute);
 app.use('/api/admin',adminRoute);
 app.use('/api/product-purchase',purchaseOrderRoute)
 app.use('/api/supplier',supplierRoute)
-app.use('/api/product',inventryRoute)
+app.use('/api/inventory',inventoryRoute)
+app.use('/api/dashboard',dashboardRoute)
 
 // Port
 const PORT = process.env.PORT || 3001;

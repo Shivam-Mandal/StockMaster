@@ -78,7 +78,35 @@ export default function Sidebar() {
       <div className="flex flex-col pt-4 relative border-b">
         {/* Logo row */}
         <div className="flex items-center px-4 mb-4 space-x-2">
-          <img src={logo} alt="Logo" className="h-8 w-8 rounded" />
+          {/* <img src={logo} alt="Logo" className="h-8 w-8 rounded" /> */}
+          <div className="h-8 w-8 rounded-2xl bg-white flex items-center justify-center shadow-md">
+            <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none">
+              <rect
+                x="4"
+                y="7"
+                width="3"
+                height="10"
+                rx="1.5"
+                className="fill-slate-900"
+              />
+              <rect
+                x="10.5"
+                y="5"
+                width="3"
+                height="14"
+                rx="1.5"
+                className="fill-slate-900"
+              />
+              <rect
+                x="17"
+                y="9"
+                width="3"
+                height="8"
+                rx="1.5"
+                className="fill-slate-900"
+              />
+            </svg>
+          </div>
           {isSidebarOpen && (
             <span className="text-lg font-semibold text-gray-700">
               Stock Master
@@ -199,7 +227,7 @@ export default function Sidebar() {
               <li>
                 <button
                   onClick={logout}
-                  className="w-full text-left flex items-center px-4 py-2 text-red-600 hover:bg-gray-100"
+                  className="w-full text-left flex items-center px-4 py-2 text-red-600 hover:bg-gray-100 cursor-pointer"
                 >
                   <LogOut size={16} className="mr-2" />
                   Log out

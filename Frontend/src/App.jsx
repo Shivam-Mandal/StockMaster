@@ -1,6 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
-import Login from "./pages/login";
 import SuperAdminDashboard from "./pages/SuperAdminDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import OperatorDashboard from "./pages/OperatorDashboard";
@@ -8,17 +7,24 @@ import UsersPage from "./pages/UsersPage";
 import InventoryPage from "./pages/InventoryPage";
 import FeaturesPage from "./pages/FeaturesPage";
 import DashboardLayout from "./components/DashboardLayout";
+import MessagePage from "./pages/Message";
+import Login from "./pages/Login";
+import Loader from "./components/Loader";
+import LandingPage from "./pages/LandingPage";
+import Register from "./pages/Register";
 
 function App() {
   const { user, loading } = useAuth();
 
-  if (loading) return <div className="p-8 text-center">Loading...</div>;
+  if (loading) return <Loader />;
 
   if (!user) {
     return (
       <Routes>
+        <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
-        <Route path="*" element={<Navigate to="/login" />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     );
   }
@@ -32,6 +38,7 @@ function App() {
         <Route path="users" element={<UsersPage />} />
         <Route path="inventory" element={<InventoryPage />} />
         <Route path="features" element={<FeaturesPage />} />
+        <Route path="messages" element={<MessagePage />} />
         <Route path="*" element={<Navigate to={`/${user.role}`} />} />
       </Route>
     </Routes>

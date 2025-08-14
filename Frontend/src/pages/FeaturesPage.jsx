@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FaPlus, FaInfoCircle } from "react-icons/fa";
 
-const roles = ["Owner", "Administrator", "Editor", "Agent", "Contributor"];
+const roles = ["Add", "View", "Edit", "Cancel", "Delete"];
 
 export default function FeaturesMatrix() {
   const [features, setFeatures] = useState([
@@ -10,11 +10,11 @@ export default function FeaturesMatrix() {
       name: "Disable Create from scratch.",
       description: "Prevents users from creating documents freely.",
       enabledByRole: {
-        Owner: false,
-        Administrator: false,
-        Editor: false,
-        Agent: true,
-        Contributor: false,
+        Add: false,
+        View: false,
+        Edit: false,
+        Cancel: true,
+        Delete: false,
       },
     },
     {
@@ -22,33 +22,33 @@ export default function FeaturesMatrix() {
       name: "Disable Create from scratch button.",
       description: "",
       enabledByRole: {
-        Owner: false,
-        Administrator: false,
-        Editor: false,
-        Agent: true,
-        Contributor: false,
+        Add: false,
+        View: true,
+        Edit: false,
+        Cancel: true,
+        Delete: true,
       },
     },
     {
       id: 3,
       name: "Disable My templates.",
       enabledByRole: {
-        Owner: false,
-        Administrator: false,
-        Editor: false,
-        Agent: false,
-        Contributor: false,
+        Add: true,
+        View: false,
+        Edit: true,
+        Cancel: false,
+        Delete: true,
       },
     },
     {
       id: 4,
       name: "Disable PDF uploads.",
       enabledByRole: {
-        Owner: false,
-        Administrator: false,
-        Editor: false,
-        Agent: false,
-        Contributor: false,
+        Add: true,
+        View: false,
+        Edit: false,
+        Cancel: false,
+        Delete: false,
       },
     },
   ]);
@@ -70,9 +70,11 @@ export default function FeaturesMatrix() {
   };
 
   return (
-    <div className="p-2 font-sans max-w-6xl mx-auto">
+    <div className="p-6 font-sans max-w-7xl mx-auto bg-white ">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">Features</h2>
+        <h2 className="text-2xl font-semibold text-gray-800">
+          Feature Permissions Matrix
+        </h2>
         <button
           className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded shadow"
           onClick={() => alert("Add feature logic here")}
@@ -81,43 +83,43 @@ export default function FeaturesMatrix() {
         </button>
       </div>
 
-      <div className="bg-white rounded border shadow overflow-x-auto">
-        <table className="w-full text-sm text-left">
-          <thead>
-            <tr className="bg-gray-100 text-gray-700">
-              <th className="p-3 font-semibold">Features</th>
+      <div className="overflow-x-auto border border-gray-200 rounded-lg shadow-sm">
+        <table className="w-full min-w-[700px] text-sm text-gray-700">
+          <thead className="bg-gray-50 border-b">
+            <tr>
+              <th className="p-4 text-left font-medium text-gray-600">
+                Feature
+              </th>
               {roles.map((role) => (
-                <th key={role} className="p-3 font-semibold text-center">
+                <th
+                  key={role}
+                  className="p-4 text-center font-medium text-gray-600 whitespace-nowrap"
+                >
                   {role}
                 </th>
               ))}
             </tr>
           </thead>
-
           <tbody>
-            <tr className="bg-gray-50 border-t">
-              <td
-                colSpan={roles.length + 1}
-                className="p-3 font-medium text-gray-600"
+            {features.map((feature, i) => (
+              <tr
+                key={feature.id}
+                className={
+                  i % 2 === 0 ? "bg-white" : "bg-gray-50 hover:bg-gray-100"
+                }
               >
-                Workspace
-              </td>
-            </tr>
-
-            {features.map((feature) => (
-              <tr key={feature.id} className="border-t hover:bg-gray-50">
-                <td className="p-3 flex items-center gap-2 text-gray-800">
-                  {feature.name}
+                <td className="p-4 text-gray-800 flex items-start gap-2">
+                  <span className="font-medium">{feature.name}</span>
                   <FaInfoCircle
-                    className="text-gray-400"
-                    title={feature.description || "No description"}
+                    className="text-gray-400 mt-1 cursor-pointer"
+                    title={feature.description || "No description provided."}
                   />
                 </td>
                 {roles.map((role) => (
-                  <td key={role} className="text-center p-3">
+                  <td key={role} className="p-4 text-center">
                     <input
                       type="checkbox"
-                      className="w-4 h-4 accent-blue-600"
+                      className="w-4 h-4 text-blue-600 accent-blue-600 focus:ring-blue-500"
                       checked={feature.enabledByRole[role] || false}
                       onChange={() => toggleCheckbox(feature.id, role)}
                     />

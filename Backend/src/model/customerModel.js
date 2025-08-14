@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
 const customerSchema = new mongoose.Schema({
+    storeId: { type: mongoose.Schema.Types.ObjectId, ref: "Store", required: true },
     name: { type: String, required: true, trim: true },
     isDelivery: { type: Boolean, default: false },
     contactNumber: {
