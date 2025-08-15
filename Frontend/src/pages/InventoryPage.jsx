@@ -1,78 +1,96 @@
 import { useState, useEffect } from "react";
 import { apiBaseUrl } from "../service/api";
-import axios from 'axios'
-import Tippy from '@tippyjs/react';
-import 'tippy.js/dist/tippy.css';
+import axios from "axios";
+import Tippy from "@tippyjs/react";
+import "tippy.js/dist/tippy.css";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import {
-  FaPlus,
-  FaInfoCircle,
   FaSearch,
   FaChevronLeft,
   FaChevronRight,
 } from "react-icons/fa";
-
-const initialInventory = [
-  {
-    id: 1,
-    name: "EE0098",
-    store: "Patna Saheb Store",
-    manufacturer: "XYZ Manufacturer",
-    model: "on-9887hg",
-    orderBy: "ABC organization",
-    description: "Basic electric component",
-    minStock: 1,
-  },
-  {
-    id: 2,
-    name: "EE0066",
-    store: "Patna Saheb Store",
-    manufacturer: "XYZ Manufacturer",
-    model: "on-9887hg",
-    orderBy: "ABC organization",
-    description: "Test item for quality",
-    minStock: 8,
-  },
-];
-
-
-
-
+import PurchaseOrderModal from "../pages/purchaseOrderModal";
 
 export default function InventoryPage() {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const [suppliers, setSuppliers] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedSupplier, setSelectedSupplier] = useState("");
+  const [purchaseQty, setPurchaseQty] = useState(1);
+  const [showModal, setShowModal] = useState(false);
+
   const pageSize = 5;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [productRes, categoryRes] = await Promise.all([
-          axios.get(`${apiBaseUrl}/api/inventory/product-list`, { withCredentials: true }),
-          axios.get(`${apiBaseUrl}/api/inventory/category-list`, { withCredentials: true })
-        ]);
-
+        const productRes = await axios.get(`${apiBaseUrl}/api/inventory/product-list`, { withCredentials: true });
         setProducts(productRes.data.data);
-        setCategories(categoryRes.data);
-
-        console.log("Product List:", productRes.data.data);
-        console.log("Category List:", categoryRes.data);
       } catch (error) {
-        console.error(
-          "Error fetching data:",
-          error.response?.data || error.message
-        );
+        console.error("Error fetching data:", error.response?.data || error.message);
       }
     };
 
     fetchData();
   }, []);
 
+  const handleBuyClick = async (product) => {
+    if (product.quantityInStock >= product.reorderLevel) {
+      toast.info("This product has enough stock.");
+      return;
+    }
+    try {
+      const res = await axios.get(`${apiBaseUrl}/api/supplier/list`, {
+        withCredentials: true,
+      });
+      setSuppliers(res.data.suppliers);
+      setSelectedProduct(product);
+      setSelectedSupplier("");
+      setPurchaseQty(1);
+      setShowModal(true);
+    } catch (error) {
+      toast.error("Failed to fetch suppliers");
+    }
+  };
+
+  const handlePurchase = async () => {
+    if (!selectedSupplier || purchaseQty <= 0) {
+      toast.error("Please select supplier and valid quantity");
+      return;
+    }
+    console.log("selected Product in try",selectedProduct)
+    console.log("selected store try",selectedProduct.store)
+    console.log("selected supplier in try",selectedSupplier)
+    console.log("selected quantity in try",purchaseQty,typeof purchaseQty)
+    try {
+      await axios.post(
+        `${apiBaseUrl}/api/product-purchase/create-product-order`,
+        {
+          supplier: selectedSupplier,
+          store: selectedProduct.store,
+          products: [
+          {
+            product: selectedProduct._id,
+            quantity: Number(purchaseQty)
+          }
+        ]
+        },
+        { withCredentials: true }
+      );
+      toast.success("Purchase order sent!");
+      setShowModal(false);
+    } catch (error) {
+      toast.error("Error sending purchase order");
+    }
+  };
+
   const filtered = products.filter(
     (item) =>
       item.name?.toLowerCase().includes(search.toLowerCase()) ||
-      item.store.toLowerCase().includes(search.toLowerCase())
+      item.store?.toLowerCase().includes(search.toLowerCase())
   );
 
   const totalPages = Math.ceil(filtered.length / pageSize) || 1;
@@ -118,21 +136,21 @@ export default function InventoryPage() {
               <th className="px-5 py-3 text-left font-semibold">Description</th>
               <th className="px-5 py-3 text-left font-semibold">Stock Status</th>
               <th className="px-5 py-3 text-left font-semibold">Quantity</th>
+              <th className="px-5 py-3 text-left font-semibold">Buy from Supplier</th>
             </tr>
           </thead>
           <tbody>
-            {products.length === 0 ? (
+            {pageData.length === 0 ? (
               <tr>
-                <td colSpan={7} className="text-center py-10 text-gray-400">
+                <td colSpan={11} className="text-center py-10 text-gray-400">
                   No inventory found.
                 </td>
               </tr>
             ) : (
-              products.map((item, index) => (
+              pageData.map((item, index) => (
                 <tr
                   key={item.id || index}
-                  className={`transition hover:bg-gray-200 ${index % 2 === 0 ? "bg-white" : "bg-gray-100"
-                    }`}
+                  className={`transition hover:bg-gray-200 ${index % 2 === 0 ? "bg-white" : "bg-gray-100"}`}
                 >
                   <td className="px-5 py-4">{item.sku}</td>
                   <td className="px-5 py-4">{item.name}</td>
@@ -140,29 +158,22 @@ export default function InventoryPage() {
                   <td className="px-5 py-4">{item.sellingPrice} Rs.</td>
                   <td className="px-5 py-4">{item.brand}</td>
                   <td className="px-5 py-4">{item.category}</td>
-                  <td className="px-5 py-4">{item.supplier.contactPerson}</td>
-                  {/* <td className="px-5 py-4 relative group">
-                    {item.description.length > 10
-                      ? `${item.description.substring(0, 30)}...`
-                      : item.description}
-                    <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block bg-gray-200 text-gray-900 rounded px-3 py-1 shadow-lg w-max max-w-xs z-20">
-                      {item.description}
-                    </div>
-                  </td> */}
+                  <td className="px-5 py-4">
+                    {item.supplier?.contactPerson || "-"}
+                  </td>
                   <td className="px-5 py-4 cursor-pointer">
                     <Tippy content={item.description} placement="top" theme="light">
                       <span>
-                        {item.description.length > 30
+                        {item.description?.length > 30
                           ? `${item.description.substring(0, 30)}...`
                           : item.description}
                       </span>
                     </Tippy>
                   </td>
-
                   <td className="px-5 py-4">
                     <span
                       className={`px-3 py-1 text-xs font-medium rounded-full
-    ${item.quantityInStock === 0
+                        ${item.quantityInStock === 0
                           ? "bg-red-100 text-red-600"
                           : item.quantityInStock < item.reorderLevel
                             ? "bg-yellow-100 text-yellow-600"
@@ -176,47 +187,46 @@ export default function InventoryPage() {
                           : "In Stock"}
                     </span>
                   </td>
-                  <td className={`px-5 py-4 font-medium
-    ${item.quantityInStock === 0
-                      ? " text-red-600"
-                      : item.quantityInStock < item.reorderLevel
-                        ? " text-yellow-600"
-                        : " text-green-600"
-                    }`}>{item.quantityInStock}</td>
+                  <td
+                    className={`px-5 py-4 font-medium
+                     ${item.quantityInStock === 0
+                        ? " text-red-600"
+                        : item.quantityInStock < item.reorderLevel
+                          ? " text-yellow-600"
+                          : " text-green-600"
+                      }`}
+                  >
+                    {item.quantityInStock}
+                  </td>
+                  <td className="text-center">
+                    <button
+                      className="bg-blue-500 font-semibold text-white px-4 py-1.5 rounded-full hover:bg-blue-600"
+                      onClick={() => handleBuyClick(item)}
+                    >
+                      Buy
+                    </button>
+                  </td>
                 </tr>
               ))
             )}
-
-            {/* Empty rows to maintain height */}
-            {Array.from({ length: pageSize - pageData.length }).map((_, i) => (
-              <tr key={`empty-${i}`} className="bg-white">
-                <td colSpan={7} className="px-5 py-4">
-                  &nbsp;
-                </td>
-              </tr>
-            ))}
           </tbody>
         </table>
       </div>
 
-      {/* Footer Actions and Pagination */}
+      {/* Footer & Pagination */}
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 px-6 py-5 border-t bg-white">
-        {/* Action Buttons */}
         <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-          {["New Stock", "Edit", "Add Stock", "Consumption Stock"].map(
-            (label) => (
-              <button
-                key={label}
-                className="px-4 py-2 rounded-md text-sm font-medium text-white bg-[#1AB2E6] hover:bg-[#199FCC] transition"
-              >
-                {label}
-              </button>
-            )
-          )}
+          {["New Stock", "Edit", "Add Stock", "Consumption Stock"].map((label) => (
+            <button
+              key={label}
+              className="px-4 py-2 rounded-md text-sm font-medium text-white bg-[#1AB2E6] hover:bg-[#199FCC] transition"
+            >
+              {label}
+            </button>
+          ))}
         </div>
 
-        {/* Pagination */}
-        <div className="flex items-center gap-2 text-sm text-gray-600">
+        <div className="flex justify-between items-center mt-4">
           <button
             className="p-2 border rounded disabled:opacity-50 text-[#1AB2E6]"
             onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
@@ -224,7 +234,7 @@ export default function InventoryPage() {
           >
             <FaChevronLeft />
           </button>
-          <span>
+          <span className="mx-2">
             Page <strong>{currentPage}</strong> of {totalPages}
           </span>
           <button
@@ -236,6 +246,19 @@ export default function InventoryPage() {
           </button>
         </div>
       </div>
+
+      {/* Modal */}
+      <PurchaseOrderModal
+        showModal={showModal}
+        setShowModal={setShowModal}
+        selectedProduct={selectedProduct}
+        suppliers={suppliers}
+        selectedSupplier={selectedSupplier}
+        setSelectedSupplier={setSelectedSupplier}
+        purchaseQty={purchaseQty}
+        setPurchaseQty={setPurchaseQty}
+        handlePurchase={handlePurchase}
+      />
     </div>
   );
 }
