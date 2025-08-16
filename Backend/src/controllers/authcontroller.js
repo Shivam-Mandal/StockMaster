@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 import Admin from '../model/adminModel.js';
 import Store from '../model/storeModel.js';
 import dotenv from 'dotenv';
+import Session from '../model/sessionModel.js';
 dotenv.config()
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -47,37 +48,7 @@ const signup = async (req, res) => {
     admin.storeId = store._id;
     await admin.save();
 
-    res.status(200).json({ message: "User registered successfully" });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
-// login controller
-const login = async (req, res) => {
-  let { email, password } = req.body;
-  try {
-    const admin = await Admin.findOne({ email });
-    if (!admin)
-      return res.status(400).json({ message: "Invalid email or password" });
-
-    const isMatch = await bcrypt.compare(password, admin.password);
-    if (!isMatch)
-      return res.status(400).json({ message: "Invalid email or password" });
-
-
-    /*
-    if(admin.isFirstLogin === true  && admin.role === 'operator') {
-        return res.status(403).json({ message: 'Please change your password first' });
-    }
-    */
-    const AdminDetail = await Admin.findById(admin._id);
-
-    if (!AdminDetail.storeId) {
-      return res.status(400).json({ message: "Store not linked with admin." });
-    }
-    console.log("before jwt sign admin detail:", AdminDetail)
-    const token = jwt.sign({ id: AdminDetail._id, role: AdminDetail.role, storeId: AdminDetail.storeId }, JWT_SECRET, { expiresIn: '1d' });
+    const token = jwt.sign({ id: admin._id, role: admin.role, storeId: store.storeId }, JWT_SECRET, { expiresIn: '1d' });
 
     res.cookie("token", token, {
       httpOnly: true,
@@ -87,14 +58,71 @@ const login = async (req, res) => {
       maxAge: 24 * 60 * 60 * 1000,
     });
 
-    const adminObj = AdminDetail.toObject();
-    delete adminObj.password;
-
-    res.json({ message: "Logged in successfully" });
+    res.status(200).json({ message: "User registered successfully" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
+// login controller
+const login = async (req, res) => {
+  console.log("Login request received");
+  const { email, password } = req.body;
+
+  try {
+    const admin = await Admin.findOne({ email });
+    if (!admin)
+      return res.status(400).json({ message: "Invalid email or password" });
+
+    const isMatch = await bcrypt.compare(password, admin.password);
+    if (!isMatch)
+      return res.status(400).json({ message: "Invalid email or password" });
+
+    const AdminDetail = await Admin.findById(admin._id);
+
+    if (!AdminDetail.storeId) {
+      return res.status(400).json({ message: "Store not linked with admin." });
+    }
+
+    AdminDetail.todayLoginCount += 1;
+    AdminDetail.lastLogin = Date.now();
+    await AdminDetail.save();
+
+    // Create new session
+    const session = new Session({
+      adminId: admin._id,
+      loginTime: Date.now(),
+      logoutTime: null, // set this at logout
+      ipAddress: req.ip,
+      status: "active",
+    });
+    await session.save();
+
+    // Generate JWT
+    const token = jwt.sign(
+      { id: AdminDetail._id, role: AdminDetail.role, storeId: AdminDetail.storeId },
+      JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // works in dev & prod
+      path: "/",
+      sameSite: "lax",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
+    // Send back safe details
+    const { password: _, ...safeAdmin } = AdminDetail.toObject();
+
+    res.json({ message: "Logged in successfully", admin: safeAdmin });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
 
 const logout = (req, res) => {
   try {

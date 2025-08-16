@@ -12,6 +12,8 @@ import Login from "./pages/Login";
 import Loader from "./components/Loader";
 import LandingPage from "./pages/LandingPage";
 import Register from "./pages/Register";
+import OperatorManage from "./pages/OperatorManage";
+import Operator from "./pages/Operator";
 
 function App() {
   const { user, loading } = useAuth();
@@ -34,7 +36,15 @@ function App() {
       <Route path="/" element={<DashboardLayout />}>
         <Route path="super-admin" element={<SuperAdminDashboard />} />
         <Route path="admin" element={<AdminDashboard />} />
-        <Route path="operator" element={<OperatorDashboard />} />
+        <Route path="operator" element={<Operator />}>
+          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route path="manage" element={<OperatorManage />} />
+          <Route path="dashboard" element={<OperatorDashboard />} />
+          <Route path="auto-mapping" element={<OperatorDashboard />} />
+          <Route path="data-connections" element={<OperatorDashboard />} />
+          <Route path="settings" element={<OperatorDashboard />} />
+          <Route path="*" element={<Navigate to="dashboard" replace />} />
+        </Route>
         <Route path="users" element={<UsersPage />} />
         <Route path="inventory" element={<InventoryPage />} />
         <Route path="features" element={<FeaturesPage />} />

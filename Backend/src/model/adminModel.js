@@ -36,11 +36,29 @@ const adminSchema = new mongoose.Schema({
     ref: 'Admin', // Only admins/super-admins can create other admins
     default: null,
   },
-
-
   createdAt: {
     type: Date,
     default: Date.now,
+  },
+  todayLoginCount: {
+    type: Number,
+    default: 0, // Count of logins today
+  },
+  lastLogin: {
+    type: Date,
+    default: null, 
+  },
+  todayLoginDuration: {
+    type: Number,
+    default: 0, 
+  },
+  totalLoginDuration: {
+    type: Number,
+    default: 0, 
+  },
+  lastPasswordChange: {
+    type: Date,
+    default: null, 
   },
 });
 

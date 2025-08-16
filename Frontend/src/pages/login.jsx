@@ -240,7 +240,7 @@ export default function Login() {
               </button>
             </form>
             <div className="col-span-1 md:col-span-2 text-center text-sm mt-2">
-              Already have an account?
+              New to our Platform?
               <a
                 href="/register"
                 className="text-blue-600 hover:underline ml-1"
