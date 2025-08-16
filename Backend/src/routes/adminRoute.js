@@ -9,7 +9,13 @@ const router = express.Router();
 router.get('/session', authmiddleware,authorize('super-admin','admin','operator'), adminController.getAdminProfile);
 
 
-router.post('/add-operator', authmiddleware,authorize('admin'), adminController.addOperator)
+router.post('/add-operator', authmiddleware,authorize('admin'), adminController.addOperator);
+
+router.get('/update-session', authmiddleware, adminController.updateSession);
+
+router.get('/all-operators', authmiddleware, authorize('super-admin', 'admin'), adminController.getAllOperators);
+
+router.post('/operator-info', authmiddleware, authorize('super-admin', 'admin'), adminController.getOperatorInfo);
 
 
 router.get('/inactive-stores', authmiddleware, authorize('super-admin'), adminController.getInactiveStores);

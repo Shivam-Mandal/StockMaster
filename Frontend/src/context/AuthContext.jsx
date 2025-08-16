@@ -74,7 +74,7 @@ export const AuthProvider = ({ children }) => {
       const data = await sessionUser();
       if (data) {
         navigate(`/login`, { replace: true });
-        alert("Registration successful! Please log in.");
+        alert("Registration successful!");
       } else {
         throw new Error("Failed to fetch user session");
       }

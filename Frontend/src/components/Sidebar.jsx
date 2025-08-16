@@ -3,6 +3,8 @@ import { useAuth } from "../context/AuthContext";
 import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
+  UserStar,
+  ShieldUser,
   Users,
   Package,
   Settings,
@@ -24,31 +26,43 @@ export default function Sidebar() {
   const sidebarItems = [
     {
       label: "Dashboard",
-      to: `/${user?.role}`,
+      to: `${user?.role}`,
       icon: LayoutDashboard,
       roles: ["super-admin", "admin", "operator", "staff"],
     },
     {
       label: "Users",
-      to: "/users",
+      to: "users",
       icon: Users,
       roles: ["super-admin", "admin"],
     },
     {
+      label: "Operators",
+      to: "operator",
+      icon: ShieldUser,
+      roles: ["super-admin", "admin"],
+    },
+    {
+      label: "Suppliers",
+      to: "suppliers",
+      icon: UserStar,
+      roles: ["super-admin", "admin"],
+    },
+    {
       label: "Inventory",
-      to: "/inventory",
+      to: "inventory",
       icon: Package,
       roles: ["super-admin", "admin", "operator"],
     },
     {
       label: "Features",
-      to: "/features",
+      to: "features",
       icon: Settings,
       roles: ["super-admin", "admin", "operator"],
     },
     {
       label: "Messages",
-      to: "/messages",
+      to: "messages",
       icon: Mail,
       roles: ["super-admin", "admin", "operator", "staff"],
     },
@@ -129,13 +143,14 @@ export default function Sidebar() {
         {/* Menu items */}
         <nav className="flex flex-col space-y-1 px-2 pb-2">
           {filteredItems.map((item) => {
-            const isActive = location.pathname === item.to;
+            console.log(item.to, location.pathname.split('/')[1]);
+            const isActive = location.pathname.split('/')[1] === item.to;
             const Icon = item.icon;
 
             return (
               <Link
                 key={item.to}
-                to={item.to}
+                to={`/${item.to}`}
                 className={`flex items-center space-x-3 p-2 rounded-md transition-all ${
                   isActive
                     ? "bg-[#1AB2E6] text-white"
